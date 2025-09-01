@@ -21,7 +21,7 @@ try:
         print("Warning: Default themes.yaml not found.")
 
 except Exception as e:
-    print(f"Error during sciplotpy initialization: {e}")
+    print(f"Error during project_style_py initialization: {e}")
 
 
 # --- Expose public functions for easy access ---

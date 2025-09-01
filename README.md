@@ -30,15 +30,25 @@ The `set_project_style()` function configures matplotlib's `rcParams` and regist
 ```python
 import seaborn as sns
 import matplotlib.pyplot as plt
-import sciplotpy as scp
+import pandas as pd
+import numpy as np
+import project_style_py as scp
 
-# Apply the 'default' project style
-scp.set_project_style("default")
+# Make a demo dataset of random numbers
+np.random.seed(42)
+data = {
+    "flipper_length_mm": np.random.rand(100) * 200,
+    "bill_length_mm": np.random.rand(100) * 100,
+    "species": np.random.choice(["Adelie", "Chinstrap", "Gentoo"], 100)
+}
+penguins = pd.DataFrame(data)
 
-penguins = sns.load_dataset("penguins")
 sns.scatterplot(data=penguins, x="flipper_length_mm", y="bill_length_mm")
 plt.title("Plot with 'default' Theme")
 plt.show()
+
+# Apply the 'default' project style
+scp.set_project_style("default")
 
 # You can also override specific parameters on the fly
 scp.set_project_style("publication", **{'axes.labelsize': 14})
