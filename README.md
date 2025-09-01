@@ -72,11 +72,11 @@ import sciplotpy as scp
 adata = sc.datasets.pbmc3k_processed()
 
 # Option 1: Apply a palette sequentially
-sc.pl.umap(adata, color="louvain", palette=scp.get_scanpy_palette("npg"))
+sc.pl.umap(adata, color="louvain", palette=scp.get_palette("npg"))
 
 # Option 2 (Recommended): Create a stable color-to-label map
 # This ensures 'CD4 T-cell' is ALWAYS the same color in every plot.
-cell_type_palette = scp.get_scanpy_mapped_palette(adata.obs['celltype'], "celltype")
+cell_type_palette = scp.get_mapped_palette(adata.obs['celltype'], "celltype")
 sc.pl.umap(adata, color="celltype", palette=cell_type_palette)
 ```
 

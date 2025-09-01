@@ -29,8 +29,8 @@ __all__ = [
     'load_project_palettes',
     'load_project_themes',
     'display_project_palette',
-    'get_scanpy_palette',
-    'get_scanpy_mapped_palette',
+    'get_palette',
+    'get_mapped_palette',
     'set_project_style'
 ]
 

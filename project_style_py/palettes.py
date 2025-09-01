@@ -35,9 +35,9 @@ def display_project_palette(palette_name: str):
     fig.suptitle(f"Project Palette: '{palette_name}'", fontsize=14)
     plt.show()
 
-def get_scanpy_palette(palette_name: str) -> List[str]:
+def get_palette(palette_name: str) -> List[str]:
     """
-    Retrieves a named palette as a simple list of hex codes for use with scanpy.
+    Retrieves a named palette as a simple list of hex codes.
     """
     palettes = get_project_palettes()
     if palette_name not in palettes:
@@ -52,16 +52,16 @@ def get_scanpy_palette(palette_name: str) -> List[str]:
     else:
         raise TypeError(f"Palette '{palette_name}' is not a valid list or dictionary.")
 
-def get_scanpy_mapped_palette(
+def get_mapped_palette(
     obs_column: pd.Series, 
     palette_name: str
 ) -> Dict[str, str]:
     """
     Creates a dictionary mapping unique observation labels to specific colors
-    from a project palette, ensuring consistent color-label associations in scanpy.
+    from a project palette, ensuring consistent color-label associations.
 
     Args:
-        obs_column (pd.Series): The observation column from an AnnData object
+        obs_column (pd.Series): Column containing relevant labels in a pandas dataframe
             (e.g., adata.obs['cell_type']).
         palette_name (str): The name of the project palette to use.
 
@@ -73,7 +73,7 @@ def get_scanpy_mapped_palette(
     else:
         categories = obs_column.unique()
 
-    color_list = get_scanpy_palette(palette_name)
+    color_list = get_palette(palette_name)
     
     color_map = {
         category: color_list[i % len(color_list)]
