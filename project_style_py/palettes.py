@@ -1,84 +1,93 @@
 import matplotlib.pyplot as plt
-import pandas as pd
-from typing import List, Dict, Sequence
+import numpy as np
+from matplotlib import colors as mcolors
+from typing import Dict, List, Union, Sequence
 from .config import get_project_palettes
-
-def display_project_palette(palette_name: str):
-    """
-    Displays a visualization of a named color palette.
-    """
-    palettes = get_project_palettes()
-    if palette_name not in palettes:
-        raise ValueError(f"Palette '{palette_name}' not found. Available: {list(palettes.keys())}")
-
-    colors = palettes[palette_name]
-    
-    color_values = list(colors.values()) if isinstance(colors, dict) else colors
-    color_names = list(colors.keys()) if isinstance(colors, dict) else [f"Color {i+1}" for i in range(len(colors))]
-
-    n = len(color_values)
-    fig, ax = plt.subplots(1, 1, figsize=(n * 1.5, 2))
-    
-    for i, (color, name) in enumerate(zip(color_values, color_names)):
-        ax.add_patch(plt.Rectangle((i, 0), 1, 1, color=color))
-        ax.text(i + 0.5, 0.5, f"{name}\n{color}", color='white' if sum(plt.colors.to_rgb(color)) < 1.5 else 'black',
-                ha='center', va='center', fontsize=10, weight='bold')
-
-    ax.set_xlim(0, n)
-    ax.set_ylim(0, 1)
-    ax.set_xticks([])
-    ax.set_yticks([])
-    ax.spines['top'].set_visible(False)
-    ax.spines['right'].set_visible(False)
-    ax.spines['bottom'].set_visible(False)
-    ax.spines['left'].set_visible(False)
-    fig.suptitle(f"Project Palette: '{palette_name}'", fontsize=14)
-    plt.show()
 
 def get_palette(palette_name: str) -> List[str]:
     """
-    Retrieves a named palette as a simple list of hex codes.
+    Retrieves a project color palette formatted as a list for scanpy.
+
+    Args:
+        palette_name: The name of the palette to retrieve.
+
+    Returns:
+        A list of hex color codes.
     """
     palettes = get_project_palettes()
     if palette_name not in palettes:
-        raise ValueError(f"Palette '{palette_name}' not found. Available: {list(palettes.keys())}")
+        available = ", ".join(palettes.keys())
+        raise ValueError(f"Palette '{palette_name}' not found. Available palettes are: {available}")
+    
+    colors = palettes[palette_name]
+    return colors if isinstance(colors, list) else list(colors.values())
+
+def get_mapped_palette(data_labels: Sequence, palette_name: str) -> Dict[str, str]:
+    """
+    Creates a stable mapping between data labels and colors from a palette.
+
+    This ensures that a specific label (e.g., a cell type) is always assigned
+    the same color, regardless of its order in the data.
+
+    Args:
+        data_labels: A sequence (like a pandas Series or list) of the labels to map.
+        palette_name: The name of the project palette to use for mapping.
+
+    Returns:
+        A dictionary mapping each unique label to a hex color code.
+    """
+    unique_labels = sorted(list(set(data_labels)))
+    palette_values = get_palette(palette_name)
+    
+    # Create a stable mapping using modulo arithmetic for color cycling
+    return {label: palette_values[i % len(palette_values)] for i, label in enumerate(unique_labels)}
+
+def display_project_palette(palette_name: str):
+    """
+    Displays a color palette as a clean bar plot of color swatches.
+
+    Args:
+        palette_name: The name of the palette to display.
+    """
+    palettes = get_project_palettes()
+    if palette_name not in palettes:
+        available = ", ".join(palettes.keys())
+        raise ValueError(f"Palette '{palette_name}' not found. Available palettes are: {available}")
 
     colors = palettes[palette_name]
     
-    if isinstance(colors, dict):
-        return list(colors.values())
-    elif isinstance(colors, list):
-        return colors
-    else:
-        raise TypeError(f"Palette '{palette_name}' is not a valid list or dictionary.")
+    palette_data = colors if isinstance(colors, list) else list(colors.values())
+    palette_names = [""] * len(palette_data) if isinstance(colors, list) else list(colors.keys())
 
-def get_mapped_palette(
-    obs_column: pd.Series, 
-    palette_name: str
-) -> Dict[str, str]:
-    """
-    Creates a dictionary mapping unique observation labels to specific colors
-    from a project palette, ensuring consistent color-label associations.
-
-    Args:
-        obs_column (pd.Series): Column containing relevant labels in a pandas dataframe
-            (e.g., adata.obs['cell_type']).
-        palette_name (str): The name of the project palette to use.
-
-    Returns:
-        Dict[str, str]: A dictionary mapping labels to hex color codes.
-    """
-    if pd.api.types.is_categorical_dtype(obs_column):
-        categories = obs_column.cat.categories
-    else:
-        categories = obs_column.unique()
-
-    color_list = get_palette(palette_name)
+    fig, ax = plt.subplots(figsize=(len(palette_data) * 1.5, 2.5))
     
-    color_map = {
-        category: color_list[i % len(color_list)]
-        for i, category in enumerate(categories)
-    }
+    ax.bar(
+        x=range(len(palette_data)),
+        height=[1] * len(palette_data),
+        color=palette_data,
+        tick_label=palette_names,
+        width=1
+    )
+
+    # Add color hex codes as text on the bars
+    for i, color in enumerate(palette_data):
+        # Determine text color (black or white) based on background brightness
+        r, g, b = mcolors.to_rgb(color)
+        luminance = 0.299 * r + 0.587 * g + 0.114 * b
+        text_color = 'white' if luminance < 0.5 else 'black'
+        ax.text(i, 0.5, color, ha='center', va='center', color=text_color, fontsize=10, weight='bold')
+
+    ax.set_xticks(range(len(palette_data)))
+    ax.set_xticklabels(palette_names, rotation=45, ha="right")
+    ax.get_yaxis().set_visible(False)
+    ax.set_xlim(-0.5, len(palette_data) - 0.5)
+    ax.set_ylim(0, 1)
     
-    return color_map
+    # Remove frame/spines
+    for spine in ax.spines.values():
+        spine.set_visible(False)
+
+    ax.set_title(f"Palette: {palette_name}", pad=20, fontsize=14, weight='bold')
+    plt.tight_layout()
+    plt.show()
 

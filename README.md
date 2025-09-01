@@ -77,10 +77,8 @@ If you need to load a discrete scale to pass to your plotting function, you can 
 Example
 
 ```python
-import sciplotpy as scp
+import project_style_py as scp
 import numpy as np
-
-data = np.random.rand(10, 12)
 
 # Set the discrete color scale manually
 sns.scatterplot(data=penguins, x="flipper_length_mm", y="bill_length_mm", hue="species", palette=scp.get_palette("npg"))
@@ -90,7 +88,7 @@ This is useful for example to set specific colors when plotting UMAP in `scanpy`
 
 ```python
 import scanpy as sc
-import sciplotpy as scp
+import project_style_py as scp
 
 # Assume 'adata' is your AnnData object
 adata = sc.datasets.pbmc3k_processed()
@@ -121,7 +119,7 @@ Point the package to your own configuration files.
 scp.load_project_palettes("path/to/my_palettes.yaml")
 
 # Load themes from a raw GitHub URL
-scp.load_project_themes("[https://raw.githubusercontent.com/user/repo/main/configs/project_themes.yaml](https://raw.githubusercontent.com/user/repo/main/configs/project_themes.yaml)")
+scp.load_project_themes("https://raw.githubusercontent.com/user/repo/main/configs/project_themes.yaml")
 
 # Re-apply the style to make the new settings take effect
 scp.set_project_style("default")
