@@ -1,0 +1,7 @@
+# Core plotting libraries
+matplotlib>=3.0
+seaborn>=0.11
+# For reading YAML configuration files
+PyYAML>=5.0
+# Good to have explicitly
+pandas>=1.2
