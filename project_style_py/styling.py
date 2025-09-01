@@ -15,8 +15,8 @@ def _register_continuous_cmaps():
             
             cmap = LinearSegmentedColormap.from_list(cmap_name, color_list)
             
-            cm.register(cmap=cmap)
-            cm.register(cmap=cmap.reversed(), name=f"{cmap_name}_r")
+            cm.ColormapRegistry.register(cmap=cmap)
+            cm.ColormapRegistry.register(cmap=cmap.reversed(), name=f"{cmap_name}_r")
             
     except ValueError:
         pass # Palettes not yet loaded, which is fine.

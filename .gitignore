@@ -3,3 +3,4 @@ test/
 *.egg-info/
 uv.*
 __pycache__
+build/

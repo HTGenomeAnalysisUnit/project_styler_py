@@ -25,3 +25,6 @@ dependencies = [
     "ipython>=8.12.3",
     "ipykernel>=6.29.5",
 ]
+
+[tool.setuptools]
+package-data = { "project_style_py" = ["resources/*.yaml"] }

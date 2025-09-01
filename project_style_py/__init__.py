@@ -13,12 +13,12 @@ try:
     if os.path.exists(_DEFAULT_PALETTES):
         load_project_palettes(_DEFAULT_PALETTES)
     else:
-        print("Warning: Default palettes.yaml not found.")
-        
+        print(f"Warning: Default palettes.yaml not found from {_DEFAULT_PALETTES}")
+
     if os.path.exists(_DEFAULT_THEMES):
         load_project_themes(_DEFAULT_THEMES)
     else:
-        print("Warning: Default themes.yaml not found.")
+        print(f"Warning: Default themes.yaml not found from {_DEFAULT_THEMES}")
 
 except Exception as e:
     print(f"Error during project_style_py initialization: {e}")

@@ -6,5 +6,5 @@ seaborn>=0.11
 PyYAML>=5.0
 # Good to have explicitly
 pandas>=1.2
-ipython
+ipython>=8.12.3
 ipykernel
