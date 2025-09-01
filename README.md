@@ -60,9 +60,23 @@ plt.title("Heatmap with a Project Colormap")
 plt.show()
 ```
 
-**Discrete Scales (scanpy)**
+**Load a discrete scale (scanpy UMAP example)**
 
-For scanpy, you have two powerful options.
+If you need to load a discrete scale to pass to your plotting function, you can do this using `get_palette()`. You can also load a precise label to color mapping using `get_mapped_palette()`.
+
+Example
+
+```python
+import sciplotpy as scp
+import numpy as np
+
+data = np.random.rand(10, 12)
+
+# Set the discrete color scale manually
+sns.scatterplot(data=penguins, x="flipper_length_mm", y="bill_length_mm", hue="species", palette=scp.get_palette("npg"))
+```
+
+This is useful for example to set specific colors when plotting UMAP in `scanpy`.
 
 ```python
 import scanpy as sc

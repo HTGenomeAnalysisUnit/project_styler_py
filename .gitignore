@@ -1,2 +1,5 @@
 .venv
 test/
+*.egg-info/
+uv.*
+__pycache__

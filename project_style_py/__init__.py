@@ -1,6 +1,6 @@
 import os
 from .config import load_project_palettes, load_project_themes
-from .palettes import display_project_palette, get_scanpy_palette, get_scanpy_mapped_palette
+from .palettes import display_project_palette, get_palette, get_mapped_palette
 from .styling import set_project_style
 
 # --- Auto-load default configurations on package import ---
