@@ -4,6 +4,7 @@ matplotlib-inline>=0.1.5
 seaborn>=0.11
 # For reading YAML configuration files
 PyYAML>=5.0
+requests>=2.25
 # Good to have explicitly
 pandas>=1.2
 ipython>=8.12.3
