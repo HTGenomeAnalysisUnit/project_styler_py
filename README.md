@@ -18,7 +18,7 @@ This package is the Python component of the `projectStyler` ecosystem, with a si
 You can install the Python package directly from its GitHub repository using pip.
 
 ```bash
-pip install git+https://github.com/your-organization/project_style_py.git
+pip install git+https://github.com/HTGenomeAnalysisUnit/project_styler_py.git
 ```
 
 ## 🐍 Usage
@@ -120,6 +120,11 @@ scp.load_project_palettes("path/to/my_palettes.yaml")
 
 # Load themes from a raw GitHub URL
 scp.load_project_themes("https://raw.githubusercontent.com/user/repo/main/configs/project_themes.yaml")
+
+# Load from a private GitHub repository
+scp.load_project_themes(
+    "https://raw.githubusercontent.com/user/repo/main/configs/project_themes.yaml", 
+    github_pat="your_github_token")
 
 # Re-apply the style to make the new settings take effect
 scp.set_project_style("default")
