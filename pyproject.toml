@@ -1,0 +1,24 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "project_style_py"
+version = "0.1.0"
+authors = [
+  { name="Edoardo Giacopuzzi", email="edoardo.giacopuzzi@efht.org" },
+]
+description = "Configurable plotting styles for scientific projects in Python."
+requires-python = ">=3.8"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+dependencies = [
+    "matplotlib>=3.3",
+    "seaborn>=0.11",
+    "PyYAML>=6.0",
+    "scanpy>=1.9",
+    "requests>=2.25"
+]

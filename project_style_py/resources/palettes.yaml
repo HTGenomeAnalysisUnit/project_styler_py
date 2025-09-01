@@ -1,0 +1,49 @@
+# Default color palettes for the scientific project.
+primary:
+  deep_blue: "#0A3B5C"
+  sky_blue: "#56B4E9"
+  orange: "#E69F00"
+  dark_grey: "#2F2F2F"
+  light_grey: "#D3D3D3"
+
+vibrant:
+  magenta: "#CC79A7"
+  green: "#009E73"
+  yellow: "#F0E442"
+  blue: "#0072B2"
+  vermillion: "#D55E00"
+
+# The full 10-color NPG palette, best for discrete scales with many categories.
+# Also registered as 'project_npg' for a complex continuous gradient.
+npg:
+  - "#E64B35" # red
+  - "#4DBBD5" # cyan
+  - "#00A087" # green
+  - "#3C5488" # blue
+  - "#F39B7F" # orange
+  - "#8491B4" # grey
+  - "#91D1C2" # teal
+  - "#DC0000" # dark red
+  - "#7E6148" # brown
+  - "#B09C85" # light brown
+
+# A curated NPG subset, designed for smooth continuous gradients.
+# Will be registered as the colormap 'project_npg_continuous'.
+npg_continuous:
+  - "#3C5488" # blue
+  - "#4DBBD5" # cyan
+  - "#91D1C2" # teal
+  - "#F39B7F" # orange
+  - "#E64B35" # red
+
+scanpy_default:
+  - "#1f77b4"
+  - "#ff7f0e"
+  - "#2ca02c"
+  - "#d62728"
+  - "#9467bd"
+  - "#8c564b"
+  - "#e377c2"
+  - "#7f7f7f"
+  - "#bcbd22"
+  - "#17becf"
