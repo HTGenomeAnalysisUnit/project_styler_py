@@ -58,7 +58,7 @@ scp.set_project_style("publication", **{'axes.labelsize': 14})
 
 **Continuous Scales (Colormaps)**
 
-All palettes are automatically registered as `matplotlib` colormaps (e.g., `project_primary`, `project_npg_continuous`).
+All palettes are automatically registered as `matplotlib` colormaps (e.g., `project_primary`, `project_npg_continuous`). They are also registered in reverse order with `_r` suffix (e.g., `project_primary_r`).
 
 ```python
 import numpy as np

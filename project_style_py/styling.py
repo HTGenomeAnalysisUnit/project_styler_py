@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 import seaborn as sns
 from matplotlib.colors import LinearSegmentedColormap
+from matplotlib import cm
 from typing import Optional
 from .config import get_project_themes, get_project_palettes
 
@@ -14,8 +15,8 @@ def _register_continuous_cmaps():
             
             cmap = LinearSegmentedColormap.from_list(cmap_name, color_list)
             
-            plt.register_cmap(cmap=cmap)
-            plt.register_cmap(cmap=cmap.reversed(), name=f"{cmap_name}_r")
+            cm.register(cmap=cmap)
+            cm.register(cmap=cmap.reversed(), name=f"{cmap_name}_r")
             
     except ValueError:
         pass # Palettes not yet loaded, which is fine.
