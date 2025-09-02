@@ -1,5 +1,5 @@
 import os
-from .config import load_project_palettes, load_project_themes
+from .config import load_project_palettes, load_project_themes, available_palettes, available_themes
 from .palettes import display_project_palette, get_palette, get_mapped_palette
 from .styling import set_project_style
 
@@ -31,6 +31,8 @@ __all__ = [
     'display_project_palette',
     'get_palette',
     'get_mapped_palette',
-    'set_project_style'
+    'set_project_style',
+    'available_palettes',
+    'available_themes',
 ]
 

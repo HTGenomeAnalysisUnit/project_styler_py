@@ -82,3 +82,15 @@ def get_project_themes() -> Dict[str, Any]:
     if not _THEMES:
         raise ValueError("No themes have been loaded.")
     return _THEMES
+
+def available_palettes() -> str:
+    """ Log a list of available palettes """
+    if not _PALETTES:
+        return "No palettes available."
+    return ", ".join(_PALETTES.keys())
+
+def available_themes() -> str:
+    """ Log a list of available themes """
+    if not _THEMES:
+        return "No themes available."
+    return ", ".join(_THEMES.keys())

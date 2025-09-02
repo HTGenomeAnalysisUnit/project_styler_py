@@ -2,8 +2,72 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from matplotlib.colors import LinearSegmentedColormap
 from matplotlib import colormaps as cm
+from matplotlib import font_manager
 from typing import Optional
 from .config import get_project_themes, get_project_palettes
+import requests
+import zipfile
+import io
+import os
+from urllib.parse import quote_plus
+
+def _download_and_register_font(font_name: str):
+    """
+    Checks if a font is available to matplotlib, and if not, attempts to
+    download it from Google Fonts and register it.
+    """
+    try:
+        # 1. Check if font is already known to matplotlib
+        font_manager.findfont(font_name, fallback_to_default=False)
+        # print(f"Font '{font_name}' is already available.")
+        return
+    except ValueError:
+        print(f"Font '{font_name}' not found. Attempting to download from Google Fonts...")
+
+    # 2. Construct URL and download
+    try:
+        url_name = quote_plus(font_name)
+        url = f"https://fonts.google.com/download?family={url_name}"
+        response = requests.get(url)
+        response.raise_for_status()
+    except requests.exceptions.RequestException:
+        print(f"Warning: Could not download '{font_name}' from Google Fonts. Please install it manually.")
+        return
+
+    # 3. Unzip and find the regular TTF file
+    try:
+        zip_file = zipfile.ZipFile(io.BytesIO(response.content))
+        font_filename = None
+        # Try to find a 'Regular' or the first TTF file
+        for name in zip_file.namelist():
+            if 'regular' in name.lower() and name.endswith('.ttf'):
+                font_filename = name
+                break
+        if not font_filename:
+             for name in zip_file.namelist():
+                if name.endswith('.ttf'):
+                    font_filename = name
+                    break
+        
+        if not font_filename:
+            print(f"Warning: Could not find a .ttf file for '{font_name}' in the downloaded archive.")
+            return
+
+        # 4. Save the font file to matplotlib's cache directory
+        font_data = zip_file.read(font_filename)
+        font_cache_dir = font_manager.get_font_cache_dir()
+        dest_path = os.path.join(font_cache_dir, os.path.basename(font_filename))
+        
+        with open(dest_path, "wb") as f_obj:
+            f_obj.write(font_data)
+
+        # 5. Rebuild matplotlib's font cache
+        print("Rebuilding font cache. This may take a moment...")
+        font_manager._load_fontmanager(try_read_cache=False)
+        print(f"Successfully downloaded and registered '{font_name}'.")
+
+    except Exception as e:
+        print(f"Warning: Failed to install font '{font_name}'. Please install it manually. Error: {e}")
 
 def _register_continuous_cmaps():
     """Create and register continuous colormaps from loaded palettes."""
@@ -38,9 +102,16 @@ def set_project_style(theme_name: str = "default", **kwargs):
     
     plt.rcParams.update(style_dict)
     
+    # Extract the primary font family name and try to install it
+    font_families = ['sans-serif', 'serif', 'monospace']
+    for font in font_families:
+        if f'font.{font}' in style_dict and style_dict[f'font.{font}']:
+            primary_font = style_dict[f'font.{font}'][0]
+    _download_and_register_font(primary_font)
+
     try:
         palettes = get_project_palettes()
-        default_palette = next(iter(palettes.values()))
+        default_palette = palettes.get('default', next(iter(palettes.values())))
         sns.set_palette(list(default_palette.values()) if isinstance(default_palette, dict) else default_palette)
     except (StopIteration, ValueError):
         print("Warning: No color palettes loaded. Seaborn palette not set.")

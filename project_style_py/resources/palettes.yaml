@@ -1,5 +1,5 @@
 # Default color palettes for the scientific project.
-primary:
+default:
   deep_blue: "#0A3B5C"
   sky_blue: "#56B4E9"
   orange: "#E69F00"

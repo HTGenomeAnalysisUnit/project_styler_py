@@ -58,7 +58,7 @@ scp.set_project_style("publication", **{'axes.labelsize': 14})
 
 **Continuous Scales (Colormaps)**
 
-All palettes are automatically registered as `matplotlib` colormaps (e.g., `project_primary`, `project_npg_continuous`). They are also registered in reverse order with `_r` suffix (e.g., `project_primary_r`).
+All palettes are automatically registered as `matplotlib` colormaps using the `project_` prefix (e.g., `project_primary`, `project_npg_continuous`). They are also registered in reverse order with `_r` suffix (e.g., `project_primary_r`).
 
 ```python
 import numpy as np
@@ -138,6 +138,8 @@ To achieve consistent styling across your project you can either
 
 - fork this repository and editing the files in the `project_style_py/resources` directory to match your project's brand identity and then install the package from your forked repository to share the new defaults with your team.
 - create dedicated `palettes.yaml` and `themes.yaml` files for your project and ideally host them in the project GitHub repository. Then configure your scripts to always load these files from the centralized project source using the `load_project_palettes()` and `load_project_themes()` functions before setting the style with `set_project_style()`.
+
+When applying a theme for your project using `set_project_style()`, the default palette for seaborn is set to the palette named `default` if any, or the first palette defined otherwise.
 
 ## 📝 License
 
