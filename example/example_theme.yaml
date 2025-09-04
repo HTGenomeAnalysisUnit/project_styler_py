@@ -22,8 +22,8 @@ publication:
 font_theme:
   fonts:
     Open Sans:
-      - "/path/to/tff/file/OpenSans-Regular.ttf"
-      - "/path/to/tff/file/OpenSans-Bold.ttf"
+      - "https://raw.githubusercontent.com/HTGenomeAnalysisUnit/project_styler_py/refs/heads/main/example/OpenSans-Italic-VariableFont.ttf"
+      - "https://raw.githubusercontent.com/HTGenomeAnalysisUnit/project_styler_py/refs/heads/main/example/OpenSans-VariableFont.ttf"
   axes.titlesize: 16
   axes.labelsize: 14
   xtick.labelsize: 11
