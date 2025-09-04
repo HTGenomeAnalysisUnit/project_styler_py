@@ -1,0 +1,33 @@
+# These keys map directly to matplotlib.rcParams.
+publication:
+  font.family: "sans-serif"
+  font.sans-serif: "Fira Sans"
+  axes.titlesize: 16
+  axes.labelsize: 14
+  xtick.labelsize: 11
+  ytick.labelsize: 11
+  legend.fontsize: 11
+  figure.facecolor: "white"
+  axes.facecolor: "white"
+  axes.spines.top: False
+  axes.spines.right: False
+  axes.grid: True
+  axes.grid.axis: "y"
+  grid.color: "#D3D3D3"
+  grid.linestyle: "--"
+
+# You can also provide custom fonts that will be installed from tff files
+# Note the name defined must match the actual font name in the ttf file.
+# The files can be loaded either from local paths or URLs.
+font_theme:
+  fonts:
+    Open Sans:
+      - "/path/to/tff/file/OpenSans-Regular.ttf"
+      - "/path/to/tff/file/OpenSans-Bold.ttf"
+  axes.titlesize: 16
+  axes.labelsize: 14
+  xtick.labelsize: 11
+  ytick.labelsize: 11
+  legend.fontsize: 11
+  figure.facecolor: "white"
+  axes.facecolor: "white"

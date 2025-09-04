@@ -1,4 +1,24 @@
+# Named palette for exact value-color mapping
 species:
-    Gentoo: "#E69F00"
-    Adelie: "#009E73"
-    Chinstrap: "#0072B2"
+  Gentoo: "#E69F00"
+  Adelie: "#009E73"
+  Chinstrap: "#0072B2"
+
+# Sequential palette
+npg:
+  - "#E64B35" # red
+  - "#4DBBD5" # cyan
+  - "#00A087" # green
+  - "#3C5488" # blue
+  - "#F39B7F" # orange
+  - "#8491B4" # grey
+  - "#91D1C2" # teal
+  - "#DC0000" # dark red
+  - "#7E6148" # brown
+  - "#B09C85" # light brown
+
+celltypes:
+  B: "#1f77b4"
+  CD4_T: "#ff7f0e"
+  CD8_T: "#2ca02c"
+  DC: "#d62728"

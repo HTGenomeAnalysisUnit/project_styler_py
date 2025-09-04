@@ -1,6 +1,8 @@
 import yaml
+import tempfile
 import requests
 import importlib.resources
+from matplotlib import font_manager
 import pathlib
 from typing import Dict, Any
 
@@ -39,6 +41,33 @@ def _fetch_config_content(path: str, github_pat: str = None) -> str:
             raise FileNotFoundError(f"Local configuration file not found at: {path}")
         return local_path.read_text()
 
+def _fetch_binary_content(path: str, github_pat: str = None) -> bytes:
+    """Fetches binary content from a local path or a remote URL."""
+    if path.startswith(('http://', 'https://')):
+        headers = {}
+        if ("raw.githubusercontent.com" in path or "github.com" in path) and github_pat:
+            headers["Authorization"] = f"token {github_pat}"
+            print("Using GitHub PAT for authenticated access.")
+        try:
+            response = requests.get(path, headers=headers)
+            response.raise_for_status()
+            return response.content
+        except requests.exceptions.RequestException as e:
+            raise IOError(f"Failed to fetch remote file from {path}: {e}")
+    else:
+        local_path = pathlib.Path(path)
+        if not local_path.exists():
+            raise FileNotFoundError(f"Local file not found at: {path}")
+        return local_path.read_bytes()
+
+def _add_font(path: str, github_pat: str = None):
+    font_data = _fetch_binary_content(path, github_pat)
+    with tempfile.NamedTemporaryFile(delete=False, suffix=".ttf") as temp_font_file:
+        temp_font_file.write(font_data)
+        temp_font_path = temp_font_file.name
+    print(f"Font saved to temporary file: {temp_font_path}")
+    font_manager.fontManager.addfont(temp_font_path)
+
 def load_project_palettes(path: str, github_pat: str = None):
     """
     Load project color palettes from a local YAML file or a URL.
@@ -55,7 +84,7 @@ def load_project_palettes(path: str, github_pat: str = None):
     except (IOError, yaml.YAMLError) as e:
         raise RuntimeError(f"Failed to load palettes: {e}")
 
-def load_project_themes(path: str, github_pat: str = None):
+def load_project_themes(path: str, github_pat: str = None, github_pat_fonts: str = None):
     """
     Load project plot themes from a local YAML file or a URL.
 
@@ -65,9 +94,17 @@ def load_project_themes(path: str, github_pat: str = None):
     """
     global _THEMES
     try:
+        github_pat_fonts = github_pat_fonts or github_pat if github_pat_fonts != "none" else None
         content = _fetch_config_content(path, github_pat)
         _THEMES = yaml.safe_load(content)
         print(f"Successfully loaded themes from: {path}")
+        for theme_name, theme_config in _THEMES.items():
+            if 'fonts' in theme_config:
+                print(f"Loading fonts for theme: {theme_name}")
+                # fonts is expected to contain a dictionary font_name: [font_files]
+                for font_name, font_paths in theme_config['fonts'].items():
+                    for font_path in font_paths:
+                        _add_font(font_path, github_pat_fonts)
     except (IOError, yaml.YAMLError) as e:
         raise RuntimeError(f"Failed to load themes: {e}")
     

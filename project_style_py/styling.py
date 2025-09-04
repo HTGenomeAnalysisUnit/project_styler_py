@@ -97,17 +97,21 @@ def set_project_style(theme_name: str = "default", **kwargs):
     if theme_name not in themes:
         raise ValueError(f"Theme '{theme_name}' not found. Available: {list(themes.keys())}")
     
+    # If fonts is present in themes, copy this to a separate variable and remove it
+    font_dict = themes[theme_name].pop('fonts', {})
+
     style_dict = themes[theme_name].copy()
+    
+    # If font_dict is not empty, register the fonts in style_dict under sans-serif family
+    # The first font is added in position zero so it is used as the default
+    if font_dict:
+        style_dict['font.family'] = 'sans-serif'
+        style_dict['font.sans-serif'] = []
+        for font_name, font_paths in font_dict.items():
+            style_dict['font.sans-serif'].append(font_name)
+
     style_dict.update(kwargs)
-    
     plt.rcParams.update(style_dict)
-    
-    # Extract the primary font family name and try to install it
-    font_families = ['sans-serif', 'serif', 'monospace']
-    for font in font_families:
-        if f'font.{font}' in style_dict and style_dict[f'font.{font}']:
-            primary_font = style_dict[f'font.{font}'][0]
-    _download_and_register_font(primary_font)
 
     try:
         palettes = get_project_palettes()

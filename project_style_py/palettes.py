@@ -6,7 +6,7 @@ from .config import get_project_palettes
 
 def get_palette(palette_name: str) -> List[str]:
     """
-    Retrieves a project color palette formatted as a list for scanpy.
+    Retrieves a project color palette formatted as a list of colors.
 
     Args:
         palette_name: The name of the palette to retrieve.
@@ -22,12 +22,14 @@ def get_palette(palette_name: str) -> List[str]:
     colors = palettes[palette_name]
     return colors if isinstance(colors, list) else list(colors.values())
 
-def get_mapped_palette(data_labels: Sequence, palette_name: str) -> Dict[str, str]:
+def get_mapped_palette(palette_name: str, data_labels: Sequence = [], unseen_color: str = "#808080") -> Dict[str, str]:
     """
     Creates a stable mapping between data labels and colors from a palette.
 
     This ensures that a specific label (e.g., a cell type) is always assigned
     the same color, regardless of its order in the data.
+
+    When the palette is already a named palette it returns this one unchanged.
 
     Args:
         data_labels: A sequence (like a pandas Series or list) of the labels to map.
@@ -36,9 +38,27 @@ def get_mapped_palette(data_labels: Sequence, palette_name: str) -> Dict[str, st
     Returns:
         A dictionary mapping each unique label to a hex color code.
     """
-    unique_labels = sorted(list(set(data_labels)))
-    palette_values = get_palette(palette_name)
+    palettes = get_project_palettes()
+    data_labels_set = set(data_labels)
+    if palette_name not in palettes:
+        available = ", ".join(palettes.keys())
+        raise ValueError(f"Palette '{palette_name}' not found. Available palettes are: {available}")
     
+    if isinstance(palettes[palette_name], dict):
+        # If the palette is a named palette load the dict 
+        palette = palettes[palette_name]
+        # Assign to all data_labels not in the palette the unseen_color
+        for label in data_labels_set:
+            if label not in palette:
+                palette[label] = unseen_color
+        return palette
+
+    if len(data_labels_set) == 0:
+        raise ValueError("data_labels must contain at least one label for mapping when the palette is a sequence of colors.")
+    
+    unique_labels = sorted(list(data_labels_set))
+    palette_values = list(palettes[palette_name].values())
+
     # Create a stable mapping using modulo arithmetic for color cycling
     return {label: palette_values[i % len(palette_values)] for i, label in enumerate(unique_labels)}
 

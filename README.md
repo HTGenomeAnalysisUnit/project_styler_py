@@ -56,7 +56,7 @@ scp.set_project_style("publication", **{'axes.labelsize': 14})
 
 ### 2. Using Color Palettes
 
-**Continuous Scales (Colormaps)**
+#### Continuous Scales (Colormaps)
 
 All palettes are automatically registered as `matplotlib` colormaps using the `project_` prefix (e.g., `project_primary`, `project_npg_continuous`). They are also registered in reverse order with `_r` suffix (e.g., `project_primary_r`).
 
@@ -70,9 +70,12 @@ plt.title("Heatmap with a Project Colormap")
 plt.show()
 ```
 
-**Load a discrete scale (scanpy UMAP example)**
+#### Load a discrete scale**
 
-If you need to load a discrete scale to pass to your plotting function, you can do this using `get_palette()`. You can also load a precise label to color mapping using `get_mapped_palette()`.
+If you need to load a discrete scale to pass to your plotting function, you can do this using `get_palette()`. You can also load a precise label to color mapping using `get_mapped_palette()`. The `get_mapped_palette(palette_name, data_labels, unseen_color)` function has a mandatory palette_name argument, but also accept data_labels as a list/Series and unseen_color as HEX code. When these are provided:
+
+- when the selected palette is a list of colors, each unique label is mapped to a color sequentially
+- when the selected palette is a dictionary `label: color`, labels not found will be assigned the unseen_color
 
 Example
 
@@ -84,7 +87,10 @@ import numpy as np
 sns.scatterplot(data=penguins, x="flipper_length_mm", y="bill_length_mm", hue="species", palette=scp.get_palette("npg"))
 ```
 
+#### Usage with `scanpy` 
+
 This is useful for example to set specific colors when plotting UMAP in `scanpy`.
+Here, you can eventually combine multiple mapped palettes as long as keys are distinct.
 
 ```python
 import scanpy as sc
@@ -94,12 +100,31 @@ import project_style_py as scp
 adata = sc.datasets.pbmc3k_processed()
 
 # Option 1: Apply a palette sequentially
+# This works with both a sequential palette or a named palette
 sc.pl.umap(adata, color="louvain", palette=scp.get_palette("npg"))
 
 # Option 2 (Recommended): Create a stable color-to-label map
 # This ensures 'CD4 T-cell' is ALWAYS the same color in every plot.
-cell_type_palette = scp.get_mapped_palette(adata.obs['celltype'], "celltype")
-sc.pl.umap(adata, color="celltype", palette=cell_type_palette)
+cell_type_palette_1 = scp.get_mapped_palette("celltype_1", adata.obs['celltype_1'])
+sc.pl.umap(adata, color=["celltype_1"], palette=cell_type_palette_1)
+
+# combine 2 palettes
+cell_type_palette_2 = scp.get_mapped_palette("celltype_2", adata.obs['celltype_2'])
+combined_palette = cell_type_palette_1.update(cell_type_palette_2)
+sc.pl.umap(adata, color=["celltype_1", "celltype_2"], palette=combined_palette)
+```
+
+If you want to apply a custom palette only for one variable, while using the default scanpy palette for others you can simply plot them together if the additional ones are continuous. Otherwise you have to first instatiate a plot for the custom palette and then add the other variables.
+
+```python
+# Combined with a continuous variable, for example a gene expression
+umap_palette = scp.get_mapped_palette("celltype_1", adata.obs['celltype_1'])
+sc.pl.umap(adata, color=['celltype_1','geneA'], palette = umap_palette)
+
+# Combined with another discrete variable, for example another cell type annotation
+sc.pl.umap(adata, color='celltype_1', palette = umap_palette)
+sc.pl.umap(adata, color=['celltype_1','celltype_2'])
+plt.show()
 ```
 
 ### 3. Viewing Palettes
@@ -128,6 +153,32 @@ scp.load_project_themes(
 
 # Re-apply the style to make the new settings take effect
 scp.set_project_style("default")
+```
+
+When loading a theme that requires to download some fonts, an additional token can be provided for font access using the `github_pat_fonts` argument.
+When `github_pat_fonts` is `None` and `github_pat` is set, the `github_pat` value is used to access both YAML file and font files
+If you want to avoid this you can set explicitly `github_pat_fonts = "none"`.
+
+```python
+# Option 1 github_pat token is used to access both YAML file and font files
+GITHUB_TOKEN = os.environ['GITHUB_TOKEN']
+scp.load_project_themes(
+   "https://raw.githubusercontent.com/your/private/repo/palettes.yaml",
+   github_pat=GITHUB_TOKEN)
+
+# Option 2 we use 2 different token to access both YAML file and font files
+GITHUB_TOKEN = os.environ['GITHUB_TOKEN']
+GITHUB_TOKEN_FONTS = os.environ['GITHUB_TOKEN_FONTS']
+scp.load_project_themes(
+   "https://raw.githubusercontent.com/your/private/repo/palettes.yaml",
+   github_pat=GITHUB_TOKEN, github_pat_fonts=GITHUB_TOKEN_FONTS)
+
+# Option 3 we need a token to access the YAML file, but font file are publicly available font files
+GITHUB_TOKEN = os.environ['GITHUB_TOKEN']
+GITHUB_TOKEN_FONTS = os.environ['GITHUB_TOKEN_FONTS']
+scp.load_project_themes(
+   "https://raw.githubusercontent.com/your/private/repo/palettes.yaml",
+   github_pat=GITHUB_TOKEN, github_pat_fonts="none")
 ```
 
 ## ⚙️ Configuration Files
