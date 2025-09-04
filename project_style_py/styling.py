@@ -85,7 +85,7 @@ def _register_continuous_cmaps():
     except ValueError:
         pass # Palettes not yet loaded, which is fine.
 
-def set_project_style(theme_name: str = "default", **kwargs):
+def set_project_style(theme_name: str = "default", clean_style: bool = True, **kwargs):
     """
     Applies a predefined theme to matplotlib and seaborn and registers colormaps.
 
@@ -97,6 +97,9 @@ def set_project_style(theme_name: str = "default", **kwargs):
     if theme_name not in themes:
         raise ValueError(f"Theme '{theme_name}' not found. Available: {list(themes.keys())}")
     
+    # Reset rcParams to default before applying new theme
+    if clean_style: plt.rcdefaults()
+
     # If fonts is present in themes, copy this to a separate variable and remove it
     font_dict = themes[theme_name].pop('fonts', {})
 
