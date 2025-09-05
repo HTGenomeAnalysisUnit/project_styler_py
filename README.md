@@ -70,7 +70,7 @@ plt.title("Heatmap with a Project Colormap")
 plt.show()
 ```
 
-#### Load a discrete scale**
+#### Load a discrete scale
 
 If you need to load a discrete scale to pass to your plotting function, you can do this using `get_palette()`. You can also load a precise label to color mapping using `get_mapped_palette()`. The `get_mapped_palette(palette_name, data_labels, unseen_color)` function has a mandatory palette_name argument, but also accept data_labels as a list/Series and unseen_color as HEX code. When these are provided:
 

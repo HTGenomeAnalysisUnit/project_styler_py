@@ -4,7 +4,7 @@ from matplotlib import colors as mcolors
 from typing import Dict, List, Union, Sequence
 from .config import get_project_palettes
 
-def get_palette(palette_name: str) -> List[str]:
+def get_palette(palette_name: str = "default") -> List[str]:
     """
     Retrieves a project color palette formatted as a list of colors.
 
@@ -22,7 +22,7 @@ def get_palette(palette_name: str) -> List[str]:
     colors = palettes[palette_name]
     return colors if isinstance(colors, list) else list(colors.values())
 
-def get_mapped_palette(palette_name: str, data_labels: Sequence = [], unseen_color: str = "#808080") -> Dict[str, str]:
+def get_mapped_palette(palette_name: str = "default", data_labels: Sequence = [], unseen_color: str = "#808080") -> Dict[str, str]:
     """
     Creates a stable mapping between data labels and colors from a palette.
 
@@ -40,19 +40,23 @@ def get_mapped_palette(palette_name: str, data_labels: Sequence = [], unseen_col
     """
     palettes = get_project_palettes()
     data_labels_set = set(data_labels)
+    data_labels_not_in_palette = []
     if palette_name not in palettes:
         available = ", ".join(palettes.keys())
         raise ValueError(f"Palette '{palette_name}' not found. Available palettes are: {available}")
     
-    if isinstance(palettes[palette_name], dict):
-        # If the palette is a named palette load the dict 
+    # If the palette is a named palette load the dict
+    if isinstance(palettes[palette_name], dict):     
         palette = palettes[palette_name]
         # Assign to all data_labels not in the palette the unseen_color
         for label in data_labels_set:
             if label not in palette:
+                data_labels_not_in_palette.append(label)
                 palette[label] = unseen_color
+        print(f"Note: The following labels were not in the palette and have been assigned color '{unseen_color}': {data_labels_not_in_palette}")
         return palette
 
+    # If the palette is a sequence of colors, create a stable mapping
     if len(data_labels_set) == 0:
         raise ValueError("data_labels must contain at least one label for mapping when the palette is a sequence of colors.")
     
