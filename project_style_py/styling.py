@@ -96,15 +96,16 @@ def set_project_style(theme_name: str = "default", clean_style: bool = True, **k
     themes = get_project_themes()
     if theme_name not in themes:
         raise ValueError(f"Theme '{theme_name}' not found. Available: {list(themes.keys())}")
-    
+    theme_config = themes[theme_name]
+
     # Reset rcParams to default before applying new theme
     if clean_style: plt.rcdefaults()
 
     # If fonts is present in themes, copy this to a separate variable and remove it
-    font_dict = themes[theme_name].pop('fonts', {})
+    font_dict = theme_config.pop('fonts', {})
 
-    style_dict = themes[theme_name].copy()
-    
+    style_dict = theme_config.copy()
+
     # If font_dict is not empty, register the fonts in style_dict under sans-serif family
     # The first font is added in position zero so it is used as the default
     if font_dict:
@@ -125,4 +126,32 @@ def set_project_style(theme_name: str = "default", clean_style: bool = True, **k
 
     _register_continuous_cmaps()
     print(f"Project style '{theme_name}' applied. Continuous colormaps registered.")
+
+    advanced_settings = theme_config.get("advanced_grid_style", {})
+
+    def apply_advanced_style(ax):
+        """
+        Applies advanced, per-axis styling defined in the theme's
+        'advanced_grid_style' block.
+
+        Args:
+            ax (matplotlib.axes.Axes): The axis object to style.
+        """
+        if not isinstance(ax, plt.Axes):
+            raise TypeError("Argument must be a matplotlib Axes object.")
+
+        if not advanced_settings:
+            return
+
+        # Apply major grid styles if defined
+        if 'major' in advanced_settings:
+            ax.grid(which='major', **advanced_settings['major'])
+
+        # Apply minor grid styles if defined
+        if 'minor' in advanced_settings:
+            ax.minorticks_on()  # Ensure minor ticks are visible to draw grid on
+            ax.grid(which='minor', **advanced_settings['minor'])
+    print("--> Advanced styling function returned. Apply it to your axes object (e.g., style_func(ax)).")
+
+    return apply_advanced_style
 
