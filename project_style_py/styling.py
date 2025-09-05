@@ -142,14 +142,15 @@ def set_project_style(theme_name: str = "default", clean_style: bool = True, **k
         if not advanced_settings:
             return
 
-        # Apply major grid styles if defined
-        if 'major' in advanced_settings:
-            ax.grid(which='major', **advanced_settings['major'])
+        for axis, axis_setting in advanced_settings.items():
+            # Apply major grid styles if defined
+            if 'major' in axis_setting:
+                ax.grid(which='major', axis=axis, **axis_setting['major'])
 
-        # Apply minor grid styles if defined
-        if 'minor' in advanced_settings:
-            ax.minorticks_on()  # Ensure minor ticks are visible to draw grid on
-            ax.grid(which='minor', **advanced_settings['minor'])
+            # Apply minor grid styles if defined
+            if 'minor' in axis_setting:
+                ax.minorticks_on()  # Ensure minor ticks are visible to draw grid on
+                ax.grid(which='minor', axis=axis, **axis_setting['minor'])
     print("--> Advanced styling function returned. Apply it to your axes object (e.g., style_func(ax)).")
 
     return apply_advanced_style
