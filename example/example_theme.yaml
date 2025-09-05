@@ -1,4 +1,5 @@
 # These keys map directly to matplotlib.rcParams.
+# When you provide only font_family the package will first check for system fonts
 publication:
   font.family: "sans-serif"
   font.sans-serif: "Fira Sans"

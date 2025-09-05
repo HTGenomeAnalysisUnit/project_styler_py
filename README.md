@@ -27,6 +27,8 @@ pip install git+https://github.com/HTGenomeAnalysisUnit/project_styler_py.git
 
 The `set_project_style()` function configures matplotlib's `rcParams` and registers your custom colormaps.
 
+When applying a theme for your project using `set_project_style()`, the default palette for seaborn is set to the palette named `default` if any, or the first palette defined otherwise.
+
 ```python
 import seaborn as sns
 import matplotlib.pyplot as plt
@@ -190,7 +192,7 @@ To achieve consistent styling across your project you can either
 - fork this repository and editing the files in the `project_style_py/resources` directory to match your project's brand identity and then install the package from your forked repository to share the new defaults with your team.
 - create dedicated `palettes.yaml` and `themes.yaml` files for your project and ideally host them in the project GitHub repository. Then configure your scripts to always load these files from the centralized project source using the `load_project_palettes()` and `load_project_themes()` functions before setting the style with `set_project_style()`.
 
-When applying a theme for your project using `set_project_style()`, the default palette for seaborn is set to the palette named `default` if any, or the first palette defined otherwise.
+See the the `example/example_theme.yaml` and `example/example_palettes.yaml` files for examples of how to structure these configuration files.
 
 ## 📝 License
 
