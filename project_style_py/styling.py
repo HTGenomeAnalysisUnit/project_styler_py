@@ -142,7 +142,8 @@ def set_project_style(theme_name: str = "default", clean_style: bool = True, **k
 
         if not advanced_settings:
             return
-
+        
+        ax.grid(False)
         for axis, axis_setting in advanced_settings.items():
             # Apply major grid styles if defined
             if 'major' in axis_setting:
@@ -151,9 +152,11 @@ def set_project_style(theme_name: str = "default", clean_style: bool = True, **k
             # Apply minor grid styles if defined
             if 'minor' in axis_setting:
                 ax.minorticks_on()  # Ensure minor ticks are visible to draw grid on
-                minor_axis_settings = axis_setting['minor']
+                minor_axis_settings = axis_setting['minor'].copy()
                 minor_interval = minor_axis_settings.pop('minor_interval', None)
                 ax.grid(which='minor', axis=axis, **minor_axis_settings)
+                
+                # If minor_interval is specified, set minor locator
                 if minor_interval is not None:
                     if axis == 'x' or axis == 'both':
                         ax.xaxis.set_minor_locator(ticker.AutoMinorLocator(minor_interval))

@@ -15,7 +15,19 @@ publication:
   axes.grid: True
   axes.grid.axis: "y"
   grid.color: "#D3D3D3"
-  grid.linestyle: "--"
+
+  # [Optional] Advanced grid styling per axis
+  advanced_grid_style:
+    both: # Can be 'x', 'y', or 'both'
+      major:
+        linestyle: "-"
+        linewidth: 1.0
+        color: "#EBEBEB"
+      minor:
+        linestyle: "-"
+        linewidth: 0.5
+        color: "#EBEBEB"
+        minor_interval: 2 # Optional: interval for minor ticks
 
 # You can also provide custom fonts that will be installed from tff files
 # Note the name defined must match the actual font name in the ttf file.

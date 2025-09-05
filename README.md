@@ -23,9 +23,75 @@ pip install git+https://github.com/HTGenomeAnalysisUnit/project_styler_py.git
 
 ## 🐍 Usage
 
-### 1. Applying a Project Style
+### 1. Load configurations
 
-The `set_project_style()` function configures matplotlib's `rcParams` and registers your custom colormaps.
+The palettes and themes for you project can be defined in YAML files and the imported using `load_project_palettes()` and `load_project_themes()`.
+
+```python
+# Load palettes from a local file
+scp.load_project_palettes("path/to/my_palettes.yaml")
+
+# Load themes from a raw GitHub URL
+apply_style = scp.load_project_themes("https://raw.githubusercontent.com/user/repo/main/configs/project_themes.yaml")
+
+# Load from a private GitHub repository
+apply_style = scp.load_project_themes(
+    "https://raw.githubusercontent.com/user/repo/main/configs/project_themes.yaml", 
+    github_pat="your_github_token")
+
+# Re-apply the style to make the new settings take effect
+scp.set_project_style("default")
+```
+
+When loading a theme that requires to download some fonts, an additional token can be provided for font access using the `github_pat_fonts` argument.
+When `github_pat_fonts` is `None` and `github_pat` is set, the `github_pat` value is used to access both YAML file and font files
+If you want to avoid this you can set explicitly `github_pat_fonts = "none"`.
+
+```python
+# Option 1 github_pat token is used to access both YAML file and font files
+GITHUB_TOKEN = os.environ['GITHUB_TOKEN']
+scp.load_project_themes(
+   "https://raw.githubusercontent.com/your/private/repo/palettes.yaml",
+   github_pat=GITHUB_TOKEN)
+
+# Option 2 we use 2 different token to access both YAML file and font files
+GITHUB_TOKEN = os.environ['GITHUB_TOKEN']
+GITHUB_TOKEN_FONTS = os.environ['GITHUB_TOKEN_FONTS']
+scp.load_project_themes(
+   "https://raw.githubusercontent.com/your/private/repo/palettes.yaml",
+   github_pat=GITHUB_TOKEN, github_pat_fonts=GITHUB_TOKEN_FONTS)
+
+# Option 3 we need a token to access the YAML file, but font file are publicly available font files
+GITHUB_TOKEN = os.environ['GITHUB_TOKEN']
+GITHUB_TOKEN_FONTS = os.environ['GITHUB_TOKEN_FONTS']
+scp.load_project_themes(
+   "https://raw.githubusercontent.com/your/private/repo/palettes.yaml",
+   github_pat=GITHUB_TOKEN, github_pat_fonts="none")
+```
+
+### 2. Inspect available palettes and themes
+
+You can see the available palettes and themes using the following functions:
+
+```python
+import project_style_py as scp
+# List available palettes
+print(scp.available_palettes())
+# List available themes
+print(scp.available_themes())
+```
+
+If you want to see the exact content of a palette you can use `display_project_palette()`. This will display a plot representing palette colors and return a list of a dict with the color mapping
+
+```python
+# Display a specific palette
+palette = scp.display_project_palette("npg")
+print(palette)
+```
+
+### 3. Applying a Project Style
+
+The `set_project_style()` function configures matplotlib's `rcParams` and registers your custom colormaps. The function return a function that you can use to apply advanced styling for the grid on specific axes.
 
 When applying a theme for your project using `set_project_style()`, the default palette for seaborn is set to the palette named `default` if any, or the first palette defined otherwise.
 
@@ -50,13 +116,22 @@ plt.title("Plot with 'default' Theme")
 plt.show()
 
 # Apply the 'default' project style
-scp.set_project_style("default")
+apply_style = scp.set_project_style("default")
 
 # You can also override specific parameters on the fly
-scp.set_project_style("publication", **{'axes.labelsize': 14})
+apply_style = scp.set_project_style("publication", **{'axes.labelsize': 14})
 ```
 
-### 2. Using Color Palettes
+Now all plots will ineherit the defined style. In case you have defined advanced grid styles in your theme, you can apply them to specific axes using the returned function.
+
+```python
+fig, ax = plt.subplots(figsize=(6, 5))
+sns.scatterplot(data=penguins, x="flipper_length_mm", y="bill_length_mm")
+apply_style(ax)
+plt.show()
+```
+
+### 4. Using Color Palettes
 
 #### Continuous Scales (Colormaps)
 
@@ -127,60 +202,6 @@ sc.pl.umap(adata, color=['celltype_1','geneA'], palette = umap_palette)
 sc.pl.umap(adata, color='celltype_1', palette = umap_palette)
 sc.pl.umap(adata, color=['celltype_1','celltype_2'])
 plt.show()
-```
-
-### 3. Viewing Palettes
-
-Visualize any available palette.
-
-```python
-scp.display_project_palette("vibrant")
-```
-
-### 4. Custom Configurations
-
-Point the package to your own configuration files.
-
-```python
-# Load palettes from a local file
-scp.load_project_palettes("path/to/my_palettes.yaml")
-
-# Load themes from a raw GitHub URL
-scp.load_project_themes("https://raw.githubusercontent.com/user/repo/main/configs/project_themes.yaml")
-
-# Load from a private GitHub repository
-scp.load_project_themes(
-    "https://raw.githubusercontent.com/user/repo/main/configs/project_themes.yaml", 
-    github_pat="your_github_token")
-
-# Re-apply the style to make the new settings take effect
-scp.set_project_style("default")
-```
-
-When loading a theme that requires to download some fonts, an additional token can be provided for font access using the `github_pat_fonts` argument.
-When `github_pat_fonts` is `None` and `github_pat` is set, the `github_pat` value is used to access both YAML file and font files
-If you want to avoid this you can set explicitly `github_pat_fonts = "none"`.
-
-```python
-# Option 1 github_pat token is used to access both YAML file and font files
-GITHUB_TOKEN = os.environ['GITHUB_TOKEN']
-scp.load_project_themes(
-   "https://raw.githubusercontent.com/your/private/repo/palettes.yaml",
-   github_pat=GITHUB_TOKEN)
-
-# Option 2 we use 2 different token to access both YAML file and font files
-GITHUB_TOKEN = os.environ['GITHUB_TOKEN']
-GITHUB_TOKEN_FONTS = os.environ['GITHUB_TOKEN_FONTS']
-scp.load_project_themes(
-   "https://raw.githubusercontent.com/your/private/repo/palettes.yaml",
-   github_pat=GITHUB_TOKEN, github_pat_fonts=GITHUB_TOKEN_FONTS)
-
-# Option 3 we need a token to access the YAML file, but font file are publicly available font files
-GITHUB_TOKEN = os.environ['GITHUB_TOKEN']
-GITHUB_TOKEN_FONTS = os.environ['GITHUB_TOKEN_FONTS']
-scp.load_project_themes(
-   "https://raw.githubusercontent.com/your/private/repo/palettes.yaml",
-   github_pat=GITHUB_TOKEN, github_pat_fonts="none")
 ```
 
 ## ⚙️ Configuration Files

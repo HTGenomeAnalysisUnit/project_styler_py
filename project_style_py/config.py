@@ -131,3 +131,10 @@ def available_themes() -> str:
     if not _THEMES:
         return "No themes available."
     return ", ".join(_THEMES.keys())
+
+def inspect_theme(theme_name: str) -> Dict[str, Any]:
+    """Returns the configuration dictionary for a specific theme."""
+    themes = get_project_themes()
+    if theme_name not in themes:
+        raise ValueError(f"Theme '{theme_name}' not found. Available: {list(themes.keys())}")
+    return themes[theme_name]
