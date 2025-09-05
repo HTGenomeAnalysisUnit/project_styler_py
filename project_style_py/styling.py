@@ -3,6 +3,7 @@ import seaborn as sns
 from matplotlib.colors import LinearSegmentedColormap
 from matplotlib import colormaps as cm
 from matplotlib import font_manager
+import matplotlib.ticker as ticker
 from typing import Optional
 from .config import get_project_themes, get_project_palettes
 import requests
@@ -155,9 +156,9 @@ def set_project_style(theme_name: str = "default", clean_style: bool = True, **k
                 ax.grid(which='minor', axis=axis, **minor_axis_settings)
                 if minor_interval is not None:
                     if axis == 'x' or axis == 'both':
-                        ax.xaxis.set_minor_locator(plt.MultipleLocator(minor_interval))
+                        ax.xaxis.set_minor_locator(ticker.AutoMinorLocator(minor_interval))
                     if axis == 'y' or axis == 'both':
-                        ax.yaxis.set_minor_locator(plt.MultipleLocator(minor_interval))
+                        ax.yaxis.set_minor_locator(ticker.AutoMinorLocator(minor_interval))
     print("--> Advanced styling function returned. Apply it to your axes object (e.g., style_func(ax)).")
 
     return apply_advanced_style
