@@ -150,7 +150,14 @@ def set_project_style(theme_name: str = "default", clean_style: bool = True, **k
             # Apply minor grid styles if defined
             if 'minor' in axis_setting:
                 ax.minorticks_on()  # Ensure minor ticks are visible to draw grid on
-                ax.grid(which='minor', axis=axis, **axis_setting['minor'])
+                minor_axis_settings = axis_setting['minor']
+                minor_interval = minor_axis_settings.pop('minor_interval', None)
+                ax.grid(which='minor', axis=axis, **minor_axis_settings)
+                if minor_interval is not None:
+                    if axis == 'x' or axis == 'both':
+                        ax.xaxis.set_minor_locator(plt.MultipleLocator(minor_interval))
+                    if axis == 'y' or axis == 'both':
+                        ax.yaxis.set_minor_locator(plt.MultipleLocator(minor_interval))
     print("--> Advanced styling function returned. Apply it to your axes object (e.g., style_func(ax)).")
 
     return apply_advanced_style
