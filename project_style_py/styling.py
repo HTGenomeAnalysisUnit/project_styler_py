@@ -101,8 +101,9 @@ def set_project_style(theme_name: str = "default", clean_style: bool = True, **k
     # Reset rcParams to default before applying new theme
     if clean_style: plt.rcdefaults()
 
-    # If fonts is present in themes, copy this to a separate variable and remove it
+    # If fonts or advanced_grid_style are present in themes, move them to separate variables
     font_dict = theme_config.pop('fonts', {})
+    advanced_settings = theme_config.pop("advanced_grid_style", {})
 
     style_dict = theme_config.copy()
 
@@ -126,8 +127,6 @@ def set_project_style(theme_name: str = "default", clean_style: bool = True, **k
 
     _register_continuous_cmaps()
     print(f"Project style '{theme_name}' applied. Continuous colormaps registered.")
-
-    advanced_settings = theme_config.get("advanced_grid_style", {})
 
     def apply_advanced_style(ax):
         """
